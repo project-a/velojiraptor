@@ -19,9 +19,9 @@ func main() {
 	app := &cli.App{
 		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name:  "target",
+				Name:  "format",
 				Value: "table",
-				Usage: "target output",
+				Usage: "output format",
 			},
 		},
 		Commands: []*cli.Command{
