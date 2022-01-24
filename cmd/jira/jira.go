@@ -201,7 +201,7 @@ func countAction(c *cli.Context) error {
 		return err
 	}
 
-	fmt.Println(count)
+	r := report.Count{Count: count}
 
-	return nil
+	return format(c.String("format")).Dump(&r)
 }
