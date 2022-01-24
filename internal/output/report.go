@@ -1,5 +1,5 @@
 package output
 
 type Report interface {
-	Normalize() Matrix
+	Normalize() Grid
 }

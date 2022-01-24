@@ -1,18 +1,18 @@
 package output
 
-type Matrix struct {
+type Grid struct {
 	Headers []string
 	Rows    [][]string
 }
 
-func (m *Matrix) Add(row map[string]string) {
-	m.Rows = append(m.Rows, m.normalize(row))
+func (grid *Grid) Add(row map[string]string) {
+	grid.Rows = append(grid.Rows, grid.normalize(row))
 }
 
-func (m *Matrix) normalize(row map[string]string) []string {
+func (grid *Grid) normalize(row map[string]string) []string {
 	var normalizedRow []string
 
-	for _, header := range m.Headers {
+	for _, header := range grid.Headers {
 		if _, ok := row[header]; ok {
 			normalizedRow = append(normalizedRow, row[header])
 

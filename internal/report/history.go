@@ -19,13 +19,19 @@ type Change struct {
 	ChangedAt time.Time
 }
 
-func (hr *HistoryReport) Normalize() output.Matrix {
-	m := output.Matrix{
-		Headers: []string{"Issue", "Field", "From", "To", "Changed At"},
+func (hr *HistoryReport) Normalize() output.Grid {
+	grid := output.Grid{
+		Headers: []string{
+			"Issue",
+			"Field",
+			"From",
+			"To",
+			"Changed At",
+		},
 	}
 
 	for _, change := range hr.Changes {
-		m.Add(map[string]string{
+		grid.Add(map[string]string{
 			"Issue":      change.Issue,
 			"Field":      change.Field,
 			"From":       change.From,
@@ -34,7 +40,7 @@ func (hr *HistoryReport) Normalize() output.Matrix {
 		})
 	}
 
-	return m
+	return grid
 }
 
 func History(issues *[]jira.Issue, field string) HistoryReport {

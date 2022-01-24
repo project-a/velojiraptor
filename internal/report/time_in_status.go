@@ -17,16 +17,16 @@ type TimeInStatusReport struct {
 	Summaries      []TimeInStatusSummary
 }
 
-func (tisr *TimeInStatusReport) Normalize() output.Matrix {
-	m := output.Matrix{
+func (tisr *TimeInStatusReport) Normalize() output.Grid {
+	grid := output.Grid{
 		Headers: tisr.UniqueStatuses,
 	}
 
 	for _, summary := range tisr.Summaries {
-		m.Add(summary.ToRow())
+		grid.Add(summary.ToRow())
 	}
 
-	return m
+	return grid
 }
 
 func TimeInStatus(issues *[]jira.Issue, excludedStatuses []string) TimeInStatusReport {

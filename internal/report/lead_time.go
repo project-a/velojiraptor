@@ -12,17 +12,17 @@ type LeadTimeReport struct {
 	Spread  time.Duration
 }
 
-func (ltr *LeadTimeReport) Normalize() output.Matrix {
-	m := output.Matrix{
+func (ltr *LeadTimeReport) Normalize() output.Grid {
+	grid := output.Grid{
 		Headers: []string{"Average", "Spread"},
 	}
 
-	m.Add(map[string]string{
+	grid.Add(map[string]string{
 		"Average": fmt.Sprintf("%.2f", ltr.Average.Hours()/24),
 		"Spread":  fmt.Sprintf("%.2f", ltr.Spread.Hours()/24),
 	})
 
-	return m
+	return grid
 }
 
 func LeadTime(issues *[]jira.Issue, excludedStatuses []string) LeadTimeReport {

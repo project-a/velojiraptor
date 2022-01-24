@@ -10,11 +10,11 @@ type Table struct {
 }
 
 func (c *Table) Dump(report output.Report) error {
-	matrix := report.Normalize()
+	grid := report.Normalize()
 
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader(matrix.Headers)
-	table.AppendBulk(matrix.Rows)
+	table.SetHeader(grid.Headers)
+	table.AppendBulk(grid.Rows)
 	table.Render()
 
 	return nil

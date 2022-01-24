@@ -10,17 +10,17 @@ type CSV struct {
 }
 
 func (c *CSV) Dump(report output.Report) error {
-	matrix := report.Normalize()
+	grid := report.Normalize()
 
 	writer := csv.NewWriter(os.Stdout)
 	defer writer.Flush()
 
-	err := writer.Write(matrix.Headers)
+	err := writer.Write(grid.Headers)
 	if err != nil {
 		return err
 	}
 
-	for _, record := range matrix.Rows {
+	for _, record := range grid.Rows {
 		if err := writer.Write(record); err != nil {
 			return err
 		}
