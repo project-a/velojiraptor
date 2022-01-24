@@ -5,17 +5,12 @@ type Matrix struct {
 	Rows    [][]string
 }
 
-type Normalizable interface {
-	ToRow() map[string]string
+func (m *Matrix) Add(row map[string]string) {
+	m.Rows = append(m.Rows, m.normalize(row))
 }
 
-func (m *Matrix) Add(normalizable Normalizable) {
-	m.Rows = append(m.Rows, m.normalize(normalizable))
-}
-
-func (m *Matrix) normalize(normalizable Normalizable) []string {
+func (m *Matrix) normalize(row map[string]string) []string {
 	var normalizedRow []string
-	row := normalizable.ToRow()
 
 	for _, header := range m.Headers {
 		if _, ok := row[header]; ok {

@@ -17,6 +17,18 @@ type TimeInStatusReport struct {
 	Summaries      []TimeInStatusSummary
 }
 
+func (tisr *TimeInStatusReport) Normalize() output.Matrix {
+	m := output.Matrix{
+		Headers: tisr.UniqueStatuses,
+	}
+
+	for _, summary := range tisr.Summaries {
+		m.Add(summary.ToRow())
+	}
+
+	return m
+}
+
 func TimeInStatus(issues *[]jira.Issue, excludedStatuses []string) TimeInStatusReport {
 	historyReport := History(issues, "status")
 	var excludes = make(map[string]struct{})
@@ -110,18 +122,6 @@ func (summary *TimeInStatusSummary) ToRow() map[string]string {
 
 	for status, duration := range summary.Statuses {
 		m[status] = fmt.Sprintf("%.2f", duration.Hours()/24)
-	}
-
-	return m
-}
-
-func (tisr *TimeInStatusReport) Normalize() output.Matrix {
-	m := output.Matrix{
-		Headers: tisr.UniqueStatuses,
-	}
-
-	for _, summary := range tisr.Summaries {
-		m.Add(&summary)
 	}
 
 	return m
