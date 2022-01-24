@@ -45,6 +45,12 @@ func main() {
 		},
 	}
 
+	excludeFlag := cli.StringSliceFlag{
+		Name:    "exclude",
+		Aliases: []string{"e"},
+		Usage:   "statuses to exclude eg.: -e TODO -e \"In Progress\"",
+	}
+
 	app := &cli.App{
 		Flags: []cli.Flag{
 			&cli.StringFlag{
@@ -55,15 +61,17 @@ func main() {
 		},
 		Commands: []*cli.Command{
 			{
-				Name:   "search",
-				Usage:  "search issues matching the given JQL",
-				Action: issueAction,
-				Flags:  jiraFlags,
+				Name:    "count",
+				Usage:   "Counts how many issues match the given JQL",
+				Aliases: []string{"c"},
+				Action:  countAction,
+				Flags:   jiraFlags,
 			},
 			{
-				Name:   "history",
-				Usage:  "shows the changes of the given field",
-				Action: historyAction,
+				Name:    "history",
+				Usage:   "Lists the changes made to the given field",
+				Aliases: []string{"hi"},
+				Action:  historyAction,
 				Flags: []cli.Flag{
 					&cli.StringFlag{
 						Name:     "field",
@@ -73,39 +81,29 @@ func main() {
 				},
 			},
 			{
-				Name:    "time-in-status",
-				Aliases: []string{"tis"},
-				Action:  timeInStatusAction,
-				Flags: []cli.Flag{
-					&cli.StringSliceFlag{
-						Name:    "exclude",
-						Aliases: []string{"e"},
-						Usage:   "statuses to exclude eg.: -e TODO -e \"In Progress\"",
-					},
-				},
-			},
-			{
 				Name:    "lead-time",
+				Usage:   "Shows the lead time report in the given format",
 				Aliases: []string{"lt"},
 				Action:  leadTimeAction,
-				Flags: []cli.Flag{
-					&cli.StringSliceFlag{
-						Name:    "exclude",
-						Aliases: []string{"e"},
-						Usage:   "statuses to exclude eg.: -e TODO -e \"In Progress\"",
-					},
-				},
+				Flags:   []cli.Flag{&excludeFlag},
 			},
 			{
-				Name:    "count",
-				Aliases: []string{"c"},
-				Action:  countAction,
+				Name:    "search",
+				Usage:   "Searche issues matching the given JQL",
+				Aliases: []string{"s"},
+				Action:  searchAction,
 				Flags:   jiraFlags,
+			},
+			{
+				Name:    "time-in-status",
+				Usage:   "Shows the time in status report in the given format",
+				Aliases: []string{"tis"},
+				Action:  timeInStatusAction,
+				Flags:   []cli.Flag{&excludeFlag},
 			},
 		},
 	}
 
-	app.EnableBashCompletion = true
 	err := app.Run(os.Args)
 
 	if err != nil {
@@ -128,28 +126,22 @@ func load(file string) (*[]jira.Issue, error) {
 	return issues, err
 }
 
-func issueAction(c *cli.Context) error {
+func countAction(c *cli.Context) error {
 	jiraService := service.NewJiraService(
 		c.String("username"),
 		c.String("password"),
 		c.String("url"),
 	)
 
-	issues, err := jiraService.FindIssuesByJQL(c.String("jql"))
+	count, err := jiraService.Count(c.String("jql"))
 
 	if err != nil {
 		return err
 	}
 
-	res, _ := json.Marshal(issues)
+	r := report.Count{Count: count}
 
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(string(res))
-
-	return nil
+	return format(c.String("format")).Dump(&r)
 }
 
 func historyAction(c *cli.Context) error {
@@ -176,6 +168,30 @@ func leadTimeAction(c *cli.Context) error {
 	return format(c.String("format")).Dump(&r)
 }
 
+func searchAction(c *cli.Context) error {
+	jiraService := service.NewJiraService(
+		c.String("username"),
+		c.String("password"),
+		c.String("url"),
+	)
+
+	issues, err := jiraService.FindIssuesByJQL(c.String("jql"))
+
+	if err != nil {
+		return err
+	}
+
+	res, _ := json.Marshal(issues)
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(string(res))
+
+	return nil
+}
+
 func timeInStatusAction(c *cli.Context) error {
 	issues, err := load("output.json")
 
@@ -184,24 +200,6 @@ func timeInStatusAction(c *cli.Context) error {
 	}
 
 	r := report.TimeInStatus(issues, c.StringSlice("exclude"))
-
-	return format(c.String("format")).Dump(&r)
-}
-
-func countAction(c *cli.Context) error {
-	jiraService := service.NewJiraService(
-		c.String("username"),
-		c.String("password"),
-		c.String("url"),
-	)
-
-	count, err := jiraService.Count(c.String("jql"))
-
-	if err != nil {
-		return err
-	}
-
-	r := report.Count{Count: count}
 
 	return format(c.String("format")).Dump(&r)
 }
