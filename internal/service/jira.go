@@ -2,36 +2,31 @@ package service
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/andygrunwald/go-jira"
 	"os"
-	"strings"
-	"time"
 )
-
-const DateLayout = "2006-01-02"
 
 type JiraService struct {
 	client jira.Client
 }
 
-func NewJiraService(username string, password string) *JiraService {
+func NewJiraService(username string, password string, baseURL string) *JiraService {
 	// @TODO use env vars here
 	tp := jira.BasicAuthTransport{
 		Password: password,
 		Username: username,
 	}
 
-	c, _ := jira.NewClient(tp.Client(), "https://gartenhaus-gmbh.atlassian.net")
+	c, _ := jira.NewClient(tp.Client(), baseURL)
 
 	return &JiraService{client: *c}
 }
 
-// Query will implement pagination of api and get all the issues.
+// FindIssuesByJQL will implement pagination of api and get all the issues.
 // Jira API has limitation as to maxResults it can return at one time.
 // You may have usecase where you need to get all the issues according to jql
 // This is where this example comes in.
-func (js *JiraService) Query(searchString string) ([]jira.Issue, error) {
+func (js *JiraService) FindIssuesByJQL(searchString string) ([]jira.Issue, error) {
 	last := 0
 	var issues []jira.Issue
 	for {
@@ -62,6 +57,14 @@ func (js *JiraService) Query(searchString string) ([]jira.Issue, error) {
 	}
 }
 
+func (js *JiraService) Count(searchString string) (int, error) {
+	opt := &jira.SearchOptions{}
+
+	_, resp, err := js.client.Issue.Search(searchString, opt)
+
+	return resp.Total, err
+}
+
 func LoadIssuesFromFile(file string) (*[]jira.Issue, error) {
 	f, err := os.Open(file)
 
@@ -81,17 +84,4 @@ func LoadIssuesFromFile(file string) (*[]jira.Issue, error) {
 	err = json.NewDecoder(f).Decode(issues)
 
 	return issues, err
-}
-
-func (js *JiraService) Pull(from *time.Time, to *time.Time, boards []string) (*[]jira.Issue, error) {
-	jql := fmt.Sprintf(
-		"project IN (%s) AND updated > %s AND updated < %s AND statusCategory IN (Done)",
-		strings.Join(boards, ", "),
-		from.Format(DateLayout),
-		to.Format(DateLayout),
-	)
-
-	issues, err := js.Query(jql)
-
-	return &issues, err
 }

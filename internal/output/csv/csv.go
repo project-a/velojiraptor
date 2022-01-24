@@ -9,19 +9,19 @@ import (
 type CSV struct {
 }
 
-func (c *CSV) Dump(r output.Report) error {
-	m := r.Normalize()
+func (c *CSV) Dump(report output.Report) error {
+	matrix := report.Normalize()
 
-	w := csv.NewWriter(os.Stdout)
-	defer w.Flush()
+	writer := csv.NewWriter(os.Stdout)
+	defer writer.Flush()
 
-	err := w.Write(m.Headers)
+	err := writer.Write(matrix.Headers)
 	if err != nil {
 		return err
 	}
 
-	for _, record := range m.Rows {
-		if err := w.Write(record); err != nil {
+	for _, record := range matrix.Rows {
+		if err := writer.Write(record); err != nil {
 			return err
 		}
 	}

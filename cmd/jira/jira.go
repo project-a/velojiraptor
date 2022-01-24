@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/andygrunwald/go-jira"
 	"github.com/urfave/cli/v2"
@@ -16,6 +15,36 @@ import (
 )
 
 func main() {
+	jiraFlags := []cli.Flag{
+		&cli.StringFlag{
+			Name:     "username",
+			Usage:    "JIRA username",
+			Value:    "",
+			EnvVars:  []string{"JIRA_USERNAME"},
+			Required: true,
+		},
+		&cli.StringFlag{
+			Name:     "password",
+			Usage:    "JIRA password",
+			Value:    "",
+			EnvVars:  []string{"JIRA_PASSWORD"},
+			Required: true,
+		},
+		&cli.StringFlag{
+			Name:     "url",
+			Usage:    "JIRA url",
+			Value:    "",
+			EnvVars:  []string{"JIRA_URL"},
+			Required: true,
+		},
+		&cli.StringFlag{
+			Name:     "jql",
+			Usage:    "JQL to filter the tickets",
+			Value:    "",
+			Required: true,
+		},
+	}
+
 	app := &cli.App{
 		Flags: []cli.Flag{
 			&cli.StringFlag{
@@ -26,41 +55,10 @@ func main() {
 		},
 		Commands: []*cli.Command{
 			{
-				Name:   "pull",
-				Usage:  "pulls done(!) tickets which were updated within the given timeframe",
-				Action: pullAction,
-				Flags: []cli.Flag{
-					&cli.StringFlag{
-						Name:    "username",
-						Usage:   "JIRA username",
-						Value:   "",
-						EnvVars: []string{"JIRA_USERNAME"},
-					},
-					&cli.StringFlag{
-						Name:    "password",
-						Usage:   "JIRA password",
-						Value:   "",
-						EnvVars: []string{"JIRA_PASSWORD"},
-					},
-					&cli.TimestampFlag{
-						Name:     "from",
-						Layout:   "2006-01-02",
-						Usage:    "from date --from=2022-01-02",
-						Required: true,
-					},
-					&cli.TimestampFlag{
-						Name:     "to",
-						Layout:   "2006-01-02",
-						Usage:    "to date --to=2022-01-15",
-						Required: true,
-					},
-					&cli.StringSliceFlag{
-						Name:     "boards",
-						Aliases:  []string{"b"},
-						Usage:    "boards to inclode in the query eg.: -b GH -b GHDH",
-						Required: true,
-					},
-				},
+				Name:   "search",
+				Usage:  "search issues matching the given JQL",
+				Action: issueAction,
+				Flags:  jiraFlags,
 			},
 			{
 				Name:   "history",
@@ -98,6 +96,12 @@ func main() {
 					},
 				},
 			},
+			{
+				Name:    "count",
+				Aliases: []string{"c"},
+				Action:  countAction,
+				Flags:   jiraFlags,
+			},
 		},
 	}
 
@@ -109,8 +113,8 @@ func main() {
 	}
 }
 
-func foo(target string) output.Output {
-	switch target {
+func format(format string) output.Output {
+	switch format {
 	case "csv":
 		return &csv.CSV{}
 	default:
@@ -124,21 +128,14 @@ func load(file string) (*[]jira.Issue, error) {
 	return issues, err
 }
 
-func pullAction(c *cli.Context) error {
-	if len(c.String("username")) == 0 {
-		return errors.New("username is empty")
-	}
-
-	if len(c.String("password")) == 0 {
-		return errors.New("password is empty")
-	}
-
-	jiraService := service.NewJiraService(c.String("username"), c.String("password"))
-	issues, err := jiraService.Pull(
-		c.Timestamp("from"),
-		c.Timestamp("to"),
-		c.StringSlice("boards"),
+func issueAction(c *cli.Context) error {
+	jiraService := service.NewJiraService(
+		c.String("username"),
+		c.String("password"),
+		c.String("url"),
 	)
+
+	issues, err := jiraService.FindIssuesByJQL(c.String("jql"))
 
 	if err != nil {
 		return err
@@ -164,7 +161,7 @@ func historyAction(c *cli.Context) error {
 
 	r := report.History(issues, c.String("field"))
 
-	return foo(c.String("target")).Dump(&r)
+	return format(c.String("format")).Dump(&r)
 }
 
 func leadTimeAction(c *cli.Context) error {
@@ -176,7 +173,7 @@ func leadTimeAction(c *cli.Context) error {
 
 	r := report.LeadTime(issues, c.StringSlice("exclude"))
 
-	return foo(c.String("target")).Dump(&r)
+	return format(c.String("format")).Dump(&r)
 }
 
 func timeInStatusAction(c *cli.Context) error {
@@ -188,5 +185,23 @@ func timeInStatusAction(c *cli.Context) error {
 
 	r := report.TimeInStatus(issues, c.StringSlice("exclude"))
 
-	return foo(c.String("target")).Dump(&r)
+	return format(c.String("format")).Dump(&r)
+}
+
+func countAction(c *cli.Context) error {
+	jiraService := service.NewJiraService(
+		c.String("username"),
+		c.String("password"),
+		c.String("url"),
+	)
+
+	count, err := jiraService.Count(c.String("jql"))
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(count)
+
+	return nil
 }

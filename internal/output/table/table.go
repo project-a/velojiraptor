@@ -9,12 +9,12 @@ import (
 type Table struct {
 }
 
-func (c *Table) Dump(r output.Report) error {
-	m := r.Normalize()
+func (c *Table) Dump(report output.Report) error {
+	matrix := report.Normalize()
 
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader(m.Headers)
-	table.AppendBulk(m.Rows)
+	table.SetHeader(matrix.Headers)
+	table.AppendBulk(matrix.Rows)
 	table.Render()
 
 	return nil
