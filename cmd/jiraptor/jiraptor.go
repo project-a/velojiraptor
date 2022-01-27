@@ -51,6 +51,13 @@ func main() {
 		Usage:   "statuses to exclude eg.: -e TODO -e \"In Progress\"",
 	}
 
+	inputFlag := cli.StringFlag{
+		Name:     "input",
+		Usage:    "Input JSON to process",
+		Value:    "",
+		Required: true,
+	}
+
 	app := &cli.App{
 		Flags: []cli.Flag{
 			&cli.StringFlag{
@@ -78,6 +85,7 @@ func main() {
 						Usage:    "field to show the history of, eg.: --field status",
 						Required: true,
 					},
+					&inputFlag,
 				},
 			},
 			{
@@ -85,7 +93,7 @@ func main() {
 				Usage:   "Shows the lead time report in the given format",
 				Aliases: []string{"lt"},
 				Action:  leadTimeAction,
-				Flags:   []cli.Flag{&excludeFlag},
+				Flags:   []cli.Flag{&excludeFlag, &inputFlag},
 			},
 			{
 				Name:    "search",
@@ -99,7 +107,7 @@ func main() {
 				Usage:   "Shows the time in status report in the given format",
 				Aliases: []string{"tis"},
 				Action:  timeInStatusAction,
-				Flags:   []cli.Flag{&excludeFlag},
+				Flags:   []cli.Flag{&excludeFlag, &inputFlag},
 			},
 		},
 	}
@@ -145,7 +153,7 @@ func countAction(c *cli.Context) error {
 }
 
 func historyAction(c *cli.Context) error {
-	issues, err := load("output.json")
+	issues, err := load(c.String("input"))
 
 	if err != nil {
 		return err
@@ -157,7 +165,7 @@ func historyAction(c *cli.Context) error {
 }
 
 func leadTimeAction(c *cli.Context) error {
-	issues, err := load("output.json")
+	issues, err := load(c.String("input"))
 
 	if err != nil {
 		return err
@@ -193,7 +201,7 @@ func searchAction(c *cli.Context) error {
 }
 
 func timeInStatusAction(c *cli.Context) error {
-	issues, err := load("output.json")
+	issues, err := load(c.String("input"))
 
 	if err != nil {
 		return err
