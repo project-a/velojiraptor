@@ -2,8 +2,8 @@ package table
 
 import (
 	"github.com/olekukonko/tablewriter"
-	"jira_go/internal/output"
 	"os"
+	"velojiraptor/internal/output"
 )
 
 type Table struct {

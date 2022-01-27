@@ -3,8 +3,8 @@ package report
 import (
 	"fmt"
 	"github.com/andygrunwald/go-jira"
-	"jira_go/internal/output"
 	"time"
+	"velojiraptor/internal/output"
 )
 
 type TimeInStatusSummary struct {

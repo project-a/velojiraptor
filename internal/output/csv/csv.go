@@ -2,8 +2,8 @@ package csv
 
 import (
 	"encoding/csv"
-	"jira_go/internal/output"
 	"os"
+	"velojiraptor/internal/output"
 )
 
 type CSV struct {

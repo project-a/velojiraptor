@@ -2,7 +2,7 @@ package report
 
 import (
 	"fmt"
-	"jira_go/internal/output"
+	"velojiraptor/internal/output"
 )
 
 type Count struct {

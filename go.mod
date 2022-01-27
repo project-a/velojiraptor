@@ -1,4 +1,4 @@
-module jira_go
+module velojiraptor
 
 go 1.17
 

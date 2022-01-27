@@ -2,9 +2,9 @@ package report
 
 import (
 	"github.com/andygrunwald/go-jira"
-	"jira_go/internal/output"
 	"sort"
 	"time"
+	"velojiraptor/internal/output"
 )
 
 type HistoryReport struct {

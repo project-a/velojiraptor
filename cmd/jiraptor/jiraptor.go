@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"github.com/andygrunwald/go-jira"
 	"github.com/urfave/cli/v2"
-	"jira_go/internal/output"
-	"jira_go/internal/output/csv"
-	"jira_go/internal/output/table"
-	"jira_go/internal/report"
-	"jira_go/internal/service"
 	"log"
 	"os"
+	"velojiraptor/internal/output"
+	"velojiraptor/internal/output/csv"
+	"velojiraptor/internal/output/table"
+	"velojiraptor/internal/report"
+	"velojiraptor/internal/service"
 )
 
 func main() {
