@@ -89,7 +89,7 @@ func main() {
 			},
 			{
 				Name:    "search",
-				Usage:   "Searche issues matching the given JQL",
+				Usage:   "Search issues matching the given JQL",
 				Aliases: []string{"s"},
 				Action:  searchAction,
 				Flags:   jiraFlags,
