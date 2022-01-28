@@ -58,11 +58,12 @@ func main() {
 	}
 
 	app := &cli.App{
+		Usage: "Pulls and generates metrics from Jira",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:  "format",
 				Value: "table",
-				Usage: "output format",
+				Usage: "output format (\"table\", \"csv\")",
 			},
 		},
 		Commands: []*cli.Command{
