@@ -44,6 +44,8 @@ lot more.
 
 Visit [Jira's official JQL Guide](https://www.atlassian.com/software/jira/guides/expand-jira/jql) to learn more. 
 
+We'll need a token to access Jira's API. The official [Atlassian's docs](https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/) explain how we can add a token.
+
 ```bash
 export JIRA_USERNAME=foo
 export JIRA_PASSWORD=bar
