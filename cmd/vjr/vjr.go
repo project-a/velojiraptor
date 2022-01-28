@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/andygrunwald/go-jira"
 	"github.com/urfave/cli/v2"
 	"log"
 	"os"
@@ -128,12 +127,6 @@ func format(format string) output.Output {
 	}
 }
 
-func load(file string) (*[]jira.Issue, error) {
-	issues, err := service.LoadIssuesFromFile(file)
-
-	return issues, err
-}
-
 func countAction(c *cli.Context) error {
 	jiraService := service.NewJiraService(
 		c.String("username"),
@@ -153,7 +146,7 @@ func countAction(c *cli.Context) error {
 }
 
 func historyAction(c *cli.Context) error {
-	issues, err := load(c.String("input"))
+	issues, err := service.LoadIssuesFromFile(c.String("input"))
 
 	if err != nil {
 		return err
@@ -165,7 +158,7 @@ func historyAction(c *cli.Context) error {
 }
 
 func leadTimeAction(c *cli.Context) error {
-	issues, err := load(c.String("input"))
+	issues, err := service.LoadIssuesFromFile(c.String("input"))
 
 	if err != nil {
 		return err
@@ -201,7 +194,7 @@ func searchAction(c *cli.Context) error {
 }
 
 func timeInStatusAction(c *cli.Context) error {
-	issues, err := load(c.String("input"))
+	issues, err := service.LoadIssuesFromFile(c.String("input"))
 
 	if err != nil {
 		return err
