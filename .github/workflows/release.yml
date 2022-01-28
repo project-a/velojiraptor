@@ -26,6 +26,7 @@ jobs:
                     github_token: ${{ secrets.GITHUB_TOKEN }}
                     goos: ${{ matrix.goos }}
                     goarch: ${{ matrix.goarch }}
+                    goversion: 1.17
                     project_path: "./cmd/vjr"
                     binary_name: "vjr"
                     ldflags: "-s -w"
