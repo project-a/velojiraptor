@@ -11,7 +11,6 @@ type JiraService struct {
 }
 
 func NewJiraService(username string, password string, baseURL string) *JiraService {
-	// @TODO use env vars here
 	tp := jira.BasicAuthTransport{
 		Password: password,
 		Username: username,
