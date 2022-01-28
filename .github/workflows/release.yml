@@ -1,4 +1,4 @@
-name: Release TBB binaries
+name: Release Velojiraptor binaries
 
 on:
     release:
