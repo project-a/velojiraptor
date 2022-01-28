@@ -29,14 +29,14 @@ func LeadTime(issues *[]jira.Issue, excludedStatuses []string) LeadTimeReport {
 	timeInStatusReport := TimeInStatus(issues, excludedStatuses)
 	min, max, grandTotal := time.Duration(0), time.Duration(0), time.Duration(0)
 
-	for _, record := range timeInStatusReport.Summaries {
+	for i, record := range timeInStatusReport.Summaries {
 		total := time.Duration(0)
 
 		for _, duration := range record.Statuses {
 			total += duration
 		}
 
-		if min > total || min == 0 {
+		if min > total || i == 0 {
 			min = total
 		}
 
