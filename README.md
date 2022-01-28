@@ -31,8 +31,19 @@ go install cmd/vjr/vjr.go
 
 # Usage
 
-Velojiraptor provides various commands. With the `-h` or `--help` flag every command's help can be displayed. Most 
-commands support different output formats. This can be controlled with the `--format` flag. 
+Velojiraptor provides various commands. With the `-h` or `--help` flag every command's help can be displayed. 
+
+## Formats
+
+Most commands support different output formats. This can be controlled with the `--format` flag. 
+
+```bash
+# Table
+vjr search --jql "project IN (Foo)"
+vjr --format table --jql "project IN (Foo)"
+# CSV
+vjr --format csv search --jql "project IN (Foo)"
+```
 
 ## Search
 
