@@ -21,10 +21,8 @@ func NewJiraService(username string, password string, baseURL string) *JiraServi
 	return &JiraService{client: *c}
 }
 
-// FindIssuesByJQL will implement pagination of api and get all the issues.
+// FindIssuesByJQL hadles pagination to get all the issues.
 // Jira API has limitation as to maxResults it can return at one time.
-// You may have usecase where you need to get all the issues according to jql
-// This is where this example comes in.
 func (js *JiraService) FindIssuesByJQL(searchString string) ([]jira.Issue, error) {
 	last := 0
 	var issues []jira.Issue
