@@ -18,7 +18,7 @@ There are various ways of installing Velojiraptor.
 
 ## Precompiled binaries
 
-Precompiled binaries for release are available on the [Release page](https://github.com/project-a/velojiraptor/releases) 
+Precompiled binaries for released versions are available on the [Release page](https://github.com/project-a/velojiraptor/releases) 
 of this repository. Using the latest release binary is the recommended way. 
 
 ## Building from source
