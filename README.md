@@ -1,7 +1,14 @@
 # Velojiraptor
 
 Velojiraptor pulls and generates metrics from Jira. It can display filtered history and generate 
-Time In Status and Lead Time reports. 
+Time In Status and Lead Time reports.
+
+> There are similar solutions out there. Why implement a custom one? 
+
+Mainly, because of the time in status report. This report is available via Jira plugins. The plugins provide poor 
+interfacing with other apps. Automation of this report wasn't possible with the existing plugins on the market. 
+
+We did it for fun too. 🤓
 
 ![](assets/philosoraptor.png)
 
