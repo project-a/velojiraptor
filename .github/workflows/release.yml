@@ -11,15 +11,11 @@ jobs:
 
         strategy:
             matrix:
-                # build and publish in parallel: linux/amd64
                 goos: [ linux, windows, darwin ]
                 goarch: [ amd64 ]
 
         steps:
             -   uses: actions/checkout@v2
-
-#            -   name: Run tests
-#                run: go test -v -p=1 -timeout=0 ./...
 
             -   uses: wangyoucao577/go-release-action@v1.16
                 with:
