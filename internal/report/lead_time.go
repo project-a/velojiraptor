@@ -1,10 +1,9 @@
 package report
 
 import (
-	"fmt"
 	"github.com/andygrunwald/go-jira"
+	"github.com/rocketlaunchr/dataframe-go"
 	"time"
-	"velojiraptor/internal/output"
 )
 
 type LeadTimeReport struct {
@@ -12,17 +11,18 @@ type LeadTimeReport struct {
 	Spread  time.Duration
 }
 
-func (ltr *LeadTimeReport) Normalize() output.Grid {
-	grid := output.Grid{
-		Headers: []string{"Average", "Spread"},
-	}
+func (ltr *LeadTimeReport) Normalize() *dataframe.DataFrame {
+	avg := dataframe.NewSeriesFloat64("Average", nil)
+	spr := dataframe.NewSeriesFloat64("Spread", nil)
 
-	grid.Add(map[string]string{
-		"Average": fmt.Sprintf("%.2f", ltr.Average.Hours()/24),
-		"Spread":  fmt.Sprintf("%.2f", ltr.Spread.Hours()/24),
+	df := dataframe.NewDataFrame(avg, spr)
+
+	df.Append(nil, map[string]interface{}{
+		"Average": ltr.Average.Hours() / 24,
+		"Spread":  ltr.Spread.Hours() / 24,
 	})
 
-	return grid
+	return df
 }
 
 func LeadTime(issues *[]jira.Issue, excludedStatuses []string) LeadTimeReport {

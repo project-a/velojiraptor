@@ -2,9 +2,9 @@ package report
 
 import (
 	"github.com/andygrunwald/go-jira"
+	"github.com/rocketlaunchr/dataframe-go"
 	"sort"
 	"time"
-	"velojiraptor/internal/output"
 )
 
 type HistoryReport struct {
@@ -19,28 +19,32 @@ type Change struct {
 	ChangedAt time.Time
 }
 
-func (hr *HistoryReport) Normalize() output.Grid {
-	grid := output.Grid{
-		Headers: []string{
-			"Issue",
-			"Field",
-			"From",
-			"To",
-			"Changed At",
-		},
-	}
+func (hr *HistoryReport) Normalize() *dataframe.DataFrame {
+	issue := dataframe.NewSeriesString("Issue", nil)
+	field := dataframe.NewSeriesString("Field", nil)
+	from := dataframe.NewSeriesString("From", nil)
+	to := dataframe.NewSeriesString("To", nil)
+	changedAt := dataframe.NewSeriesTime("Changed At", nil)
+
+	df := dataframe.NewDataFrame(
+		issue,
+		field,
+		from,
+		to,
+		changedAt,
+	)
 
 	for _, change := range hr.Changes {
-		grid.Add(map[string]string{
+		df.Append(nil, map[string]interface{}{
 			"Issue":      change.Issue,
 			"Field":      change.Field,
 			"From":       change.From,
 			"To":         change.To,
-			"Changed At": change.ChangedAt.Format(time.RFC3339),
+			"Changed At": change.ChangedAt,
 		})
 	}
 
-	return grid
+	return df
 }
 
 func History(issues *[]jira.Issue, field string) HistoryReport {

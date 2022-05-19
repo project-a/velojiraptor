@@ -1,7 +1,9 @@
 package csv
 
 import (
-	"encoding/csv"
+	"context"
+	"github.com/rocketlaunchr/dataframe-go"
+	"github.com/rocketlaunchr/dataframe-go/exports"
 	"os"
 	"velojiraptor/internal/output"
 )
@@ -9,22 +11,15 @@ import (
 type CSV struct {
 }
 
-func (c *CSV) Dump(report output.Report) error {
-	grid := report.Normalize()
+func (csv *CSV) Dump(report output.Report) error {
+	nullString := ""
 
-	writer := csv.NewWriter(os.Stdout)
-	defer writer.Flush()
-
-	err := writer.Write(grid.Headers)
-	if err != nil {
-		return err
+	options := exports.CSVExportOptions{
+		NullString: &nullString,
+		Range:      dataframe.Range{},
+		Separator:  ',',
+		UseCRLF:    false,
 	}
 
-	for _, record := range grid.Rows {
-		if err := writer.Write(record); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return exports.ExportToCSV(context.TODO(), os.Stdout, report.Normalize(), options)
 }

@@ -1,10 +1,9 @@
 package report
 
 import (
-	"fmt"
 	"github.com/andygrunwald/go-jira"
+	"github.com/rocketlaunchr/dataframe-go"
 	"time"
-	"velojiraptor/internal/output"
 )
 
 type TimeInStatusSummary struct {
@@ -17,16 +16,26 @@ type TimeInStatusReport struct {
 	Summaries      []TimeInStatusSummary
 }
 
-func (tisr *TimeInStatusReport) Normalize() output.Grid {
-	grid := output.Grid{
-		Headers: tisr.UniqueStatuses,
+func (tisr *TimeInStatusReport) Normalize() *dataframe.DataFrame {
+	var s []dataframe.Series
+
+	s = append(s, dataframe.NewSeriesString("Issue", nil))
+
+	for _, status := range tisr.UniqueStatuses {
+		s = append(s, dataframe.NewSeriesInt64(status, nil))
 	}
+
+	df := dataframe.NewDataFrame(s...)
 
 	for _, summary := range tisr.Summaries {
-		grid.Add(summary.ToRow())
+		n := normalize(tisr.UniqueStatuses, summary.ToRow())
+
+		n["Issue"] = summary.Issue
+
+		df.Append(nil, n)
 	}
 
-	return grid
+	return df
 }
 
 func TimeInStatus(issues *[]jira.Issue, excludedStatuses []string) TimeInStatusReport {
@@ -63,7 +72,7 @@ func uniqueStatuses(changes []Change, excludes map[string]struct{}) []string {
 		statuses[change.From] = struct{}{}
 	}
 
-	headers := []string{"Issue"}
+	var headers []string
 	for status := range statuses {
 		headers = append(headers, status)
 	}
@@ -115,14 +124,28 @@ func (summary *TimeInStatusSummary) add(status string, duration time.Duration) {
 	summary.Statuses[status] = duration
 }
 
-func (summary *TimeInStatusSummary) ToRow() map[string]string {
-	m := map[string]string{
-		"Issue": summary.Issue,
-	}
+func (summary *TimeInStatusSummary) ToRow() map[string]time.Duration {
+	m := map[string]time.Duration{}
 
 	for status, duration := range summary.Statuses {
-		m[status] = fmt.Sprintf("%.2f", duration.Hours()/24)
+		m[status] = duration
 	}
 
 	return m
+}
+
+func normalize(headers []string, row map[string]time.Duration) map[string]interface{} {
+	normalizedRow := make(map[string]interface{})
+
+	for _, header := range headers {
+		if _, ok := row[header]; ok {
+			normalizedRow[header] = row[header].Microseconds()
+
+			continue
+		}
+
+		normalizedRow[header] = nil
+	}
+
+	return normalizedRow
 }

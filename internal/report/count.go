@@ -1,20 +1,13 @@
 package report
 
 import (
-	"fmt"
-	"velojiraptor/internal/output"
+	"github.com/rocketlaunchr/dataframe-go"
 )
 
 type Count struct {
 	Count int
 }
 
-func (c *Count) Normalize() output.Grid {
-	grid := output.Grid{
-		Headers: []string{"Count"},
-	}
-
-	grid.Add(map[string]string{"Count": fmt.Sprintf("%d", c.Count)})
-
-	return grid
+func (c *Count) Normalize() *dataframe.DataFrame {
+	return dataframe.NewDataFrame(dataframe.NewSeriesFloat64("Count", nil, c.Count))
 }

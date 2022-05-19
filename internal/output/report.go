@@ -1,5 +1,7 @@
 package output
 
+import "github.com/rocketlaunchr/dataframe-go"
+
 type Report interface {
-	Normalize() Grid
+	Normalize() *dataframe.DataFrame
 }
