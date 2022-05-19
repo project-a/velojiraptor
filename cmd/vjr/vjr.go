@@ -9,6 +9,7 @@ import (
 	"velojiraptor/internal/output"
 	"velojiraptor/internal/output/csv"
 	"velojiraptor/internal/output/table"
+	"velojiraptor/internal/output/timeseries"
 	"velojiraptor/internal/report"
 	"velojiraptor/internal/service"
 )
@@ -123,6 +124,8 @@ func format(format string) output.Output {
 	switch format {
 	case "csv":
 		return &csv.CSV{}
+	case "timeseries":
+		return &timeseries.Timeseries{}
 	default:
 		return &table.Table{}
 	}
