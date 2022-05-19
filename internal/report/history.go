@@ -20,19 +20,15 @@ type Change struct {
 }
 
 func (hr *HistoryReport) Normalize() *dataframe.DataFrame {
-	issue := dataframe.NewSeriesString("Issue", nil)
-	field := dataframe.NewSeriesString("Field", nil)
-	from := dataframe.NewSeriesString("From", nil)
-	to := dataframe.NewSeriesString("To", nil)
-	changedAt := dataframe.NewSeriesTime("Changed At", nil)
+	s := []dataframe.Series{
+		dataframe.NewSeriesString("Issue", nil),
+		dataframe.NewSeriesString("Field", nil),
+		dataframe.NewSeriesString("From", nil),
+		dataframe.NewSeriesString("To", nil),
+		dataframe.NewSeriesTime("Changed At", nil),
+	}
 
-	df := dataframe.NewDataFrame(
-		issue,
-		field,
-		from,
-		to,
-		changedAt,
-	)
+	df := dataframe.NewDataFrame(s...)
 
 	for _, change := range hr.Changes {
 		df.Append(nil, map[string]interface{}{
