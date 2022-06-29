@@ -12,17 +12,11 @@ type LeadTimeReport struct {
 }
 
 func (ltr *LeadTimeReport) Normalize() *dataframe.DataFrame {
-	avg := dataframe.NewSeriesFloat64("Average", nil)
-	spr := dataframe.NewSeriesFloat64("Spread", nil)
+	avg := dataframe.NewSeriesFloat64("Average", nil, ltr.Average.Hours()/24)
+	spr := dataframe.NewSeriesFloat64("Spread", nil, ltr.Spread.Hours()/24)
+	ts := dataframe.NewSeriesTime("Timestamp", nil, time.Now())
 
-	df := dataframe.NewDataFrame(avg, spr)
-
-	df.Append(nil, map[string]interface{}{
-		"Average": ltr.Average.Hours() / 24,
-		"Spread":  ltr.Spread.Hours() / 24,
-	})
-
-	return df
+	return dataframe.NewDataFrame(avg, spr, ts)
 }
 
 func LeadTime(issues *[]jira.Issue, excludedStatuses []string) LeadTimeReport {

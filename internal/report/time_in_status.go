@@ -20,17 +20,20 @@ func (tisr *TimeInStatusReport) Normalize() *dataframe.DataFrame {
 	var s []dataframe.Series
 
 	s = append(s, dataframe.NewSeriesString("Issue", nil))
+	s = append(s, dataframe.NewSeriesTime("Timestamp", nil))
 
 	for _, status := range tisr.UniqueStatuses {
 		s = append(s, dataframe.NewSeriesInt64(status, nil))
 	}
 
 	df := dataframe.NewDataFrame(s...)
+	now := time.Now()
 
 	for _, summary := range tisr.Summaries {
 		n := normalize(tisr.UniqueStatuses, summary.ToRow())
 
 		n["Issue"] = summary.Issue
+		n["Timestamp"] = now
 
 		df.Append(nil, n)
 	}

@@ -25,18 +25,18 @@ func (hr *HistoryReport) Normalize() *dataframe.DataFrame {
 		dataframe.NewSeriesString("Field", nil),
 		dataframe.NewSeriesString("From", nil),
 		dataframe.NewSeriesString("To", nil),
-		dataframe.NewSeriesTime("Changed At", nil),
+		dataframe.NewSeriesTime("Timestamp", nil),
 	}
 
 	df := dataframe.NewDataFrame(s...)
 
 	for _, change := range hr.Changes {
 		df.Append(nil, map[string]interface{}{
-			"Issue":      change.Issue,
-			"Field":      change.Field,
-			"From":       change.From,
-			"To":         change.To,
-			"Changed At": change.ChangedAt,
+			"Issue":     change.Issue,
+			"Field":     change.Field,
+			"From":      change.From,
+			"To":        change.To,
+			"Timestamp": change.ChangedAt,
 		})
 	}
 

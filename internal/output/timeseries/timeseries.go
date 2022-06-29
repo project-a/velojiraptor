@@ -3,12 +3,11 @@ package timeseries
 import (
 	"encoding/json"
 	"fmt"
-	"time"
 	"velojiraptor/internal/output"
 )
 
 type Timeseries struct {
-	Timestamps    []int64
+	Timestamps    []interface{}
 	NumericValues map[string][]interface{}
 	TagValues     map[string][]interface{}
 }
@@ -18,15 +17,12 @@ func (c *Timeseries) Dump(report output.Report) error {
 	df.Lock()
 
 	ts := Timeseries{
-		Timestamps:    []int64{},
+		Timestamps:    []interface{}{},
 		NumericValues: make(map[string][]interface{}),
 		TagValues:     make(map[string][]interface{}),
 	}
 
-	now := time.Now().UnixMicro()
-
 	for _, s := range df.Series {
-		ts.Timestamps = append(ts.Timestamps, now)
 		var values []interface{}
 		iterator := s.ValuesIterator()
 
@@ -46,6 +42,12 @@ func (c *Timeseries) Dump(report output.Report) error {
 			continue
 		}
 
+		if "Timestamp" == s.Name() {
+			ts.Timestamps = values
+
+			continue
+		}
+
 		ts.NumericValues[s.Name()] = values
 	}
 
@@ -56,3 +58,13 @@ func (c *Timeseries) Dump(report output.Report) error {
 
 	return nil
 }
+
+//func unixMicro(timestamps []interface{}) []int64 {
+//	var unixMicros []int64
+//
+//	for _, timestamp := range timestamps {
+//		unixMicros = append(unixMicros, timestamp)
+//	}
+//
+//	return unixMicros
+//}
