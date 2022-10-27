@@ -225,8 +225,3 @@ func getHeaderListAction(c *cli.Context) error {
 	}
 	return nil
 }
-
-/**
-BE ready for FE,Needs Refinement,To Do,QA/Staging,In Progress,Stakeholder Testing
---format csv time-in-status --input yd_full.json -e "On hold" -e "Basic concept" -e "Idea" -e "Needs Story" -e "Needs estimation" -e "requirement analysis" -e "Waiting for support" -e "Offen" -e "Open" -e "Concept/Design" -e "Requirement analysis" -e "Closed" -e "Done" > yd_stats.csv
-*/
