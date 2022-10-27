@@ -109,6 +109,13 @@ func main() {
 				Action:  timeInStatusAction,
 				Flags:   []cli.Flag{&excludeFlag, &inputFlag},
 			},
+			{
+				Name:    "header-list",
+				Usage:   "Shows available headers in the given imported file from Jira",
+				Aliases: []string{"hl"},
+				Action:  getHeaderListAction,
+				Flags:   []cli.Flag{&inputFlag},
+			},
 		},
 	}
 
@@ -205,3 +212,21 @@ func timeInStatusAction(c *cli.Context) error {
 
 	return format(c.String("format")).Dump(&r)
 }
+
+func getHeaderListAction(c *cli.Context) error {
+	issues, err := service.LoadIssuesFromFile(c.String("input"))
+
+	if err != nil {
+		return err
+	}
+	r := report.HeaderList(issues)
+	for _, header := range r.UniqueHeaders {
+		fmt.Println(fmt.Sprintf("\"%s\"", header))
+	}
+	return nil
+}
+
+/**
+BE ready for FE,Needs Refinement,To Do,QA/Staging,In Progress,Stakeholder Testing
+--format csv time-in-status --input yd_full.json -e "On hold" -e "Basic concept" -e "Idea" -e "Needs Story" -e "Needs estimation" -e "requirement analysis" -e "Waiting for support" -e "Offen" -e "Open" -e "Concept/Design" -e "Requirement analysis" -e "Closed" -e "Done" > yd_stats.csv
+*/
