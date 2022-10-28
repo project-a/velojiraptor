@@ -10,9 +10,9 @@ type JiraService struct {
 	client jira.Client
 }
 
-func NewJiraService(username string, password string, baseURL string) *JiraService {
+func NewJiraService(username string, apiToken string, baseURL string) *JiraService {
 	tp := jira.BasicAuthTransport{
-		Password: password,
+		Password: apiToken,
 		Username: username,
 	}
 

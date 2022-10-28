@@ -23,10 +23,10 @@ func main() {
 			Required: true,
 		},
 		&cli.StringFlag{
-			Name:     "password",
-			Usage:    "JIRA password",
+			Name:     "token",
+			Usage:    "JIRA token",
 			Value:    "",
-			EnvVars:  []string{"JIRA_PASSWORD"},
+			EnvVars:  []string{"JIRA_TOKEN"},
 			Required: true,
 		},
 		&cli.StringFlag{
@@ -131,7 +131,7 @@ func format(format string) output.Output {
 func countAction(c *cli.Context) error {
 	jiraService := service.NewJiraService(
 		c.String("username"),
-		c.String("password"),
+		c.String("token"),
 		c.String("url"),
 	)
 
@@ -173,7 +173,7 @@ func leadTimeAction(c *cli.Context) error {
 func searchAction(c *cli.Context) error {
 	jiraService := service.NewJiraService(
 		c.String("username"),
-		c.String("password"),
+		c.String("token"),
 		c.String("url"),
 	)
 
