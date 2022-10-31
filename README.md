@@ -37,6 +37,8 @@ go install cmd/vjr/vjr.go
 ## API Token
 Velojiraptor requires a token to access Jira's API. [Atlassian's official docs](https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/) explain how to obtain one.
 
+Jira deprecated the basic-auth way of securing their endpoint, but it's necessary to provide _also_ the user that generated the API token to use their endpoints.
+
 ## Use
 Velojiraptor provides various commands. Use the `--h` or `--help` flag to display further information about the available commands.
 
@@ -49,7 +51,7 @@ Visit [Jira's official JQL Guide](https://www.atlassian.com/software/jira/guides
 
 ```bash
 export JIRA_USERNAME=foo
-export JIRA_PASSWORD=bar
+export JIRA_TOKEN=bar
 export JIRA_URL=https://baz.atlassian.net
 
 vjr search --jql "project IN (GH) AND 2022-01-02 < updated AND updated < 2022-01-15 AND statusCategory IN (Done)" > result.json 
@@ -84,7 +86,7 @@ For example, to search for open bugs, run the following:
 
 ```bash
 export JIRA_USERNAME=foo
-export JIRA_PASSWORD=bar
+export JIRA_TOKEN=bar
 export JIRA_URL=https://baz.atlassian.net
 
 vjr search count --jql "type = bug AND statusCategory NOT IN (Done)" 
