@@ -23,10 +23,10 @@ func main() {
 			Required: true,
 		},
 		&cli.StringFlag{
-			Name:     "password",
-			Usage:    "JIRA password",
+			Name:     "token",
+			Usage:    "JIRA token",
 			Value:    "",
-			EnvVars:  []string{"JIRA_PASSWORD"},
+			EnvVars:  []string{"JIRA_TOKEN"},
 			Required: true,
 		},
 		&cli.StringFlag{
@@ -109,6 +109,13 @@ func main() {
 				Action:  timeInStatusAction,
 				Flags:   []cli.Flag{&excludeFlag, &inputFlag},
 			},
+			{
+				Name:    "header-list",
+				Usage:   "Shows available headers in the given imported file from Jira",
+				Aliases: []string{"hl"},
+				Action:  getHeaderListAction,
+				Flags:   []cli.Flag{&inputFlag},
+			},
 		},
 	}
 
@@ -131,7 +138,7 @@ func format(format string) output.Output {
 func countAction(c *cli.Context) error {
 	jiraService := service.NewJiraService(
 		c.String("username"),
-		c.String("password"),
+		c.String("token"),
 		c.String("url"),
 	)
 
@@ -173,7 +180,7 @@ func leadTimeAction(c *cli.Context) error {
 func searchAction(c *cli.Context) error {
 	jiraService := service.NewJiraService(
 		c.String("username"),
-		c.String("password"),
+		c.String("token"),
 		c.String("url"),
 	)
 
@@ -204,4 +211,17 @@ func timeInStatusAction(c *cli.Context) error {
 	r := report.TimeInStatus(issues, c.StringSlice("exclude"))
 
 	return format(c.String("format")).Dump(&r)
+}
+
+func getHeaderListAction(c *cli.Context) error {
+	issues, err := service.LoadIssuesFromFile(c.String("input"))
+
+	if err != nil {
+		return err
+	}
+	r := report.HeaderList(issues)
+	for _, header := range r.UniqueHeaders {
+		fmt.Println(fmt.Sprintf("\"%s\"", header))
+	}
+	return nil
 }
