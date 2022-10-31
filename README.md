@@ -92,6 +92,19 @@ export JIRA_URL=https://baz.atlassian.net
 vjr search count --jql "type = bug AND statusCategory NOT IN (Done)" 
 ```
 
+### Header List
+
+The `header-list` (`hl`) is a command to view the headers present in your exported jira file. This is particularly useful to pick, or exclude, the right columns in your final report. All the headers are going to be listed one by like following:
+
+```bash
+vjr header-list --input result.json
+
+"TODO"
+"Ready for QA"
+"QA Success"
+"Ready for Production Deployment"
+```
+
 ### Formats
 Most commands support several output formats. You can control it with the `--format` flag.
 
