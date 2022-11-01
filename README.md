@@ -1,10 +1,12 @@
 # Velojiraptor
 
-Velojiraptor pulls and generates metrics from Jira. It can display filtered history and generate **_Time In Status_** and **_Lead Time_** reports.
+Velojiraptor pulls data from Jira and generates metrics reports. It can display filtered history and provide insights into several engineering KPIs, including **_Time In Status_** and **_Lead Time_**.
 
-> There are similar solutions out there. Why implement a custom one?
+---
 
-Mainly because of the _**Time In Status**_ report. This report is available via Jira plugins, but these provide a poor interface with other apps. Automating this report wasn't possible with other plugins available on the market.
+**There are similar solutions out there. Why did you implement a custom one?**
+
+Mainly because of the _**Time In Status**_ report. While it’s supported via Jira plugins, these provide a poor interface with other apps. Automating this report wasn’t possible with other plugins available on the market.
 
 We did it for fun, too. 🤓
 
@@ -13,21 +15,24 @@ We did it for fun, too. 🤓
 ## Table of Contents
 - [Install](#install)
 - [API Token](#api-token)
-- [Use](#use)
+- [Usage](#use)
 	- [Search](#search)
 	- [History](#history)
 	- [Time in Status](#time-in-status)
 	- [Lead Time](#lead-time)
 	- [Count](#count)
+	- [Header List](#header-list)
 	- [Formats](#formats)
 
 ## Install
 There are two ways to install Velojiraptor:
 
-### Precompiled binaries
-Precompiled binaries of released versions are available in the [Release section](https://github.com/project-a/velojiraptor/releases). It’s recommended to use the latest release binary.
+### Download binaries
+You can download precompiled binaries of all versions in the [Release section](https://github.com/project-a/velojiraptor/releases). It’s recommended to use the latest release binary.
 
-### Build from the source
+**Note for macOS users**: Since Velojiraptor isn't a notarized app, Apple will prevent you from running it for the first time. To bypass Gatekeeper, you'll need to hold the `control` key (⌃) while right-clicking on the `vjr` file, select Open from the popup menu, and then click Open in the alert popup window.
+
+### Build from source
 To build Velojiraptor from the source code, make sure you have [Go 1.17 or higher](https://go.dev/doc/install).
 
 ```bash
@@ -37,35 +42,41 @@ go install cmd/vjr/vjr.go
 ## API Token
 Velojiraptor requires a token to access Jira's API. [Atlassian's official docs](https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/) explain how to obtain one.
 
-Jira deprecated the basic-auth way of securing their endpoint, but it's necessary to provide _also_ the user that generated the API token to use their endpoints.
+Jira deprecated basic authentication with passwords but _still_ requires a username to access the endpoints.
 
-## Use
-Velojiraptor provides various commands. Use the `--h` or `--help` flag to display further information about the available commands.
-
-### Search
-Before generating any report, we need to search Jira's API for tickets. We will use the `search` command's output as the input of our reports.
-
-We filter the tickets using _Jira Query Language (JQL)_, which is very flexible: We can filter boards, assignees, statuses, creators, and much more.
-
-Visit [Jira's official JQL Guide](https://www.atlassian.com/software/jira/guides/expand-jira/jql) to learn more.
+Provide your credentials like so:
 
 ```bash
 export JIRA_USERNAME=foo
 export JIRA_TOKEN=bar
 export JIRA_URL=https://baz.atlassian.net
+```
 
-vjr search --jql "project IN (GH) AND 2022-01-02 < updated AND updated < 2022-01-15 AND statusCategory IN (Done)" > result.json 
+## Usage
+Velojiraptor provides various commands. Use the `--h` or `--help` flag to display further information about the available options and arguments.
+
+### Search
+Before Velojiraptor can generate any report, you'll need to feed it with some data. The first step is to search Jira's API for tickets. We will use the `search` command's output as the input of our reports.
+
+We filter the tickets using _Jira Query Language (JQL)_, which is very flexible: It can filter boards, assignees, statuses, creators, and much more.
+
+Visit [Jira's official JQL Guide](https://www.atlassian.com/software/jira/guides/expand-jira/jql) to learn more.
+
+Here's an example that will generate some data in a file named `result.json`:
+
+```bash
+vjr search --jql "project IN (YOUR_PROJECT_NAME) AND 2022-01-02 < updated AND updated < 2022-01-15 AND statusCategory IN (Done)" > result.json 
 ```
 
 ### History
-History lists the changes made in the given field based on the search result above. This can be useful to check how often the due date has changed.
+History lists the changes made in the given field based on the search result above. This can be useful for checking how often the due date has changed.
 
 ```bash
 vjr history --input result.json --field status
 ```
 
 ### Time in Status
-This report shows how long a ticket was in a specific status. The numbers are based on the status history.
+This report shows how long a ticket remained in a specific status. The numbers are based on the status history.
 We can exclude statuses by adding `-e` flags.
 
 ```bash
@@ -85,16 +96,11 @@ The `count` command is similar to `search`—we use JQL to find tickets via Jira
 For example, to search for open bugs, run the following:
 
 ```bash
-export JIRA_USERNAME=foo
-export JIRA_TOKEN=bar
-export JIRA_URL=https://baz.atlassian.net
-
 vjr search count --jql "type = bug AND statusCategory NOT IN (Done)" 
 ```
 
 ### Header List
-
-The `header-list` (`hl`) is a command to view the headers present in your exported jira file. This is particularly useful to pick, or exclude, the right columns in your final report. All the headers are going to be listed one by like following:
+The `header-list` (or `hl`) displays the headers found in your output file. This is particularly useful for including/excluding the correct columns in your final report. The result will be a list of all the headers, like the following:
 
 ```bash
 vjr header-list --input result.json
@@ -109,9 +115,11 @@ vjr header-list --input result.json
 Most commands support several output formats. You can control it with the `--format` flag.
 
 ```bash
-# Table
 vjr search --jql "project IN (Foo)"
+
+# Table
 vjr --format table --jql "project IN (Foo)"
+
 # CSV
 vjr --format csv search --jql "project IN (Foo)"
 ```
