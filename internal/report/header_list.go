@@ -16,11 +16,14 @@ func (h *HeaderListReport) Normalize() output.Grid {
 }
 
 func HeaderList(issues *[]jira.Issue) HeaderListReport {
+	historyReport := History(issues, "status")
 	headerMap := make(map[string]bool)
+
 	// creating a map because in golang there are no set
-	for _, issue := range *issues {
-		headerMap[issue.Fields.Status.Name] = true
+	for _, change := range historyReport.Changes {
+		headerMap[change.From] = true
 	}
+
 	uniqueHeaders := make([]string, 0, len(headerMap))
 	for key := range headerMap {
 		uniqueHeaders = append(uniqueHeaders, key)
