@@ -20,7 +20,7 @@ func HeaderList(issues *[]jira.Issue) HeaderListReport {
 	// creating a map because in golang there are no set
 	for _, issue := range *issues {
 		headerMap[issue.Fields.Status.Name] = true
-	}
+	} // I have no idea what I'm doing, help!! Maybe this crap will work
 	uniqueHeaders := make([]string, 0, len(headerMap))
 	for key := range headerMap {
 		uniqueHeaders = append(uniqueHeaders, key)
