@@ -1,10 +1,11 @@
 module velojiraptor
 
-go 1.17
+go 1.18
 
 require (
 	github.com/andygrunwald/go-jira v1.15.1
 	github.com/olekukonko/tablewriter v0.0.5
+	github.com/samber/lo v1.38.1
 	github.com/urfave/cli/v2 v2.3.0
 )
 
@@ -18,4 +19,5 @@ require (
 	github.com/russross/blackfriday/v2 v2.0.1 // indirect
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	github.com/trivago/tgo v1.0.7 // indirect
+	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17 // indirect
 )

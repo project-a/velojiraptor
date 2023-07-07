@@ -56,15 +56,16 @@ func main() {
 		Value:    "",
 		Required: true,
 	}
+	formatFlag := cli.StringFlag{
+		Name:  "format",
+		Value: "table",
+		Usage: "output format (\"table\", \"csv\")",
+	}
 
 	app := &cli.App{
 		Usage: "Pulls and generates metrics from Jira",
 		Flags: []cli.Flag{
-			&cli.StringFlag{
-				Name:  "format",
-				Value: "table",
-				Usage: "output format (\"table\", \"csv\")",
-			},
+			&formatFlag,
 		},
 		Commands: []*cli.Command{
 			{
@@ -115,6 +116,13 @@ func main() {
 				Aliases: []string{"hl"},
 				Action:  getHeaderListAction,
 				Flags:   []cli.Flag{&inputFlag},
+			},
+			{
+				Name:    "dependencies",
+				Usage:   "Generates a report that shows ticket dependencies",
+				Aliases: []string{"dp"},
+				Action:  ticketDependencies,
+				Flags:   []cli.Flag{&inputFlag, &formatFlag},
 			},
 		},
 	}
@@ -224,4 +232,14 @@ func getHeaderListAction(c *cli.Context) error {
 		fmt.Println(fmt.Sprintf("\"%s\"", header))
 	}
 	return nil
+}
+
+func ticketDependencies(c *cli.Context) error {
+	issues, err := service.LoadIssuesFromFile(c.String("input"))
+	if err != nil {
+		return err
+	}
+
+	r := report.Dependencies(issues)
+	return format(c.String("format")).Dump(&r)
 }

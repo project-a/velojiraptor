@@ -123,3 +123,27 @@ vjr --format table --jql "project IN (Foo)"
 # CSV
 vjr --format csv search --jql "project IN (Foo)"
 ```
+
+
+### Dependencies
+
+The `dependencies` (or `dp`) displays the dependencies between jira tickets, using as input the list of ticket previously fetched with your `jql`.
+
+```bash
+vjr search --jql "project IN (Foo)" > example.json
+
+vjr dp --input example.json --format csv  > out.csv
+```
+
+Example output:
+
+```
++--------+--------+---------------+------------------------+-----------------+---------------+-------------------+--------------------+
+|  NAME  |   ID   |    STATUS     |       DEPENDENCY       | DEPENDENCY NAME | DEPENDENCY ID | DEPENDENCY STATUS | DEPENDENCY PROJECT |
++--------+--------+---------------+------------------------+-----------------+---------------+-------------------+--------------------+
+| EX-1   | 262280 | Draft         | clones                 | EX-45           |        129197 | Draft             | EX                 |
+| OC-2   | 126409 | Fertig        | is blocked by          | EPOX-1023       |        126423 | Deleted           | EPOX               |
+| OC-5   | 126409 | Fertig        | relates to             | CFB-32          |        128829 | Fertig            | CFB                |
++--------+--------+---------------+------------------------+-----------------+---------------+-------------------+--------------------+
+
+```
