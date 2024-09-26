@@ -65,7 +65,7 @@ Visit [Jira's official JQL Guide](https://www.atlassian.com/software/jira/guides
 Here's an example that will generate some data in a file named `result.json`:
 
 ```bash
-vjr search --jql "project IN (YOUR_PROJECT_NAME) AND updated <2022-01-02 AND updated < 2022-01-15 AND statusCategory IN (Done)" > result.json 
+vjr search --jql "project IN (YOUR_PROJECT_NAME) AND updated > 2022-01-02 AND updated < 2022-01-15 AND statusCategory IN (Done)" > result.json 
 ```
 
 ### History
